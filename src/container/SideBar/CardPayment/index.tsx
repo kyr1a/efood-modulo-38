@@ -57,31 +57,22 @@ function CardPaymentForm({
         .required('Este campo é obrigatório'),
       cardExpiresYear: Yup.string()
         .matches(/^\d{2}$/, 'Ano inválido')
-        .test('ano-nao-expirado', 'Ano inválido', function (value) {
-          if (!value) return false
-          const year = Number(value)
-          return year >= currentYear
-        })
         .required('Este campo é obrigatório')
-    }).test(
-      'cartao-nao-expirado',
-      'Cartão expirado',
-      function (values) {
-        if (
-          !values.cardExpiresMonth ||
-          !values.cardExpiresYear ||
-          !/^\d{2}$/.test(values.cardExpiresYear) ||
-          !/^(0[1-9]|1[0-2])$/.test(values.cardExpiresMonth)
-        ) {
-          return true // outros erros já serão exibidos
-        }
-        const year = Number(values.cardExpiresYear)
-        const month = Number(values.cardExpiresMonth)
-        if (year > currentYear) return true
-        if (year === currentYear && month >= currentMonth) return true
-        return false
-      }
-    ),
+        .test(
+          'cartao-nao-expirado',
+          'Cartão expirado',
+          function (value) {
+            const { cardExpiresMonth } = this.parent
+            if (!value || !cardExpiresMonth) return false
+            const year = Number(value)
+            const month = Number(cardExpiresMonth)
+            if (isNaN(year) || isNaN(month)) return false
+            if (year > currentYear) return true
+            if (year === currentYear && month >= currentMonth) return true
+            return false
+          }
+        )
+    }),
     onSubmit: (values) => {
       dispatch(
         setPayment({
