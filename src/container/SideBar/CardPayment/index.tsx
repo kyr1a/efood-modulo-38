@@ -14,11 +14,28 @@ import { formataPreco } from '../../../utilities/helper'
 import { usePurchaseMutation } from '../../../services/api'
 import { useRef, useState } from 'react'
 
+// Refs para scroll automático com fallback
+const refs: Record<string, React.RefObject<HTMLInputElement>> = {
+  cardOwner: useRef<HTMLInputElement>(null),
+  cardNumber: useRef<HTMLInputElement>(null),
+  cardCode: useRef<HTMLInputElement>(null),
+  cardExpiresMonth: useRef<HTMLInputElement>(null),
+  cardExpiresYear: useRef<HTMLInputElement>(null)
+}
+
+// Fallback para refs de campos dinâmicos ou futuros
+function getRef(field: string) {
+  return refs[field] || { current: null }
+}
+
 function scrollToError(errors: any, refs: any) {
   const fields = Object.keys(errors)
-  if (fields.length > 0 && refs[fields[0]]?.current) {
-    refs[fields[0]].current.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    refs[fields[0]].current.focus()
+  if (fields.length > 0) {
+    const ref = getRef(fields[0])
+    if (ref.current) {
+      ref.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      ref.current.focus()
+    }
   }
 }
 
@@ -42,22 +59,14 @@ function CardPaymentForm({
 
   const [loading, setLoading] = useState(false)
 
-  // Refs para scroll automático
-  const refs = {
-    cardOwner: useRef<HTMLInputElement>(null),
-    cardNumber: useRef<HTMLInputElement>(null),
-    cardCode: useRef<HTMLInputElement>(null),
-    cardExpiresMonth: useRef<HTMLInputElement>(null),
-    cardExpiresYear: useRef<HTMLInputElement>(null)
-  }
-
   const formik = useFormik({
     initialValues: {
       cardOwner: '',
       cardNumber: '',
       cardCode: '',
       cardExpiresMonth: '',
-      cardExpiresYear: ''
+      cardExpiresYear: '',
+      recNum: ''
     },
     validationSchema: Yup.object({
       cardOwner: Yup.string()
@@ -124,12 +133,13 @@ function CardPaymentForm({
   })
 
   // Scroll para o primeiro erro ao tentar enviar
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    formik.handleSubmit()
+    await formik.validateForm()
     if (Object.keys(formik.errors).length > 0) {
       scrollToError(formik.errors, refs)
     }
+    formik.handleSubmit()
   }
 
   if (isSuccess && data) {
@@ -251,3 +261,9 @@ function CardPaymentForm({
             to { transform: rotate(360deg); }
           }
         `}
+      </style>
+    </StyledCardForm>
+  )
+}
+
+export default CardPaymentForm
