@@ -31,8 +31,9 @@ function CardPaymentForm({
     (state: RootReducer) => state.orderReducer.products
   )
 
-  const currentYear = Number(new Date().getFullYear().toString().slice(-2))
-  const currentMonth = new Date().getMonth() + 1
+  const now = new Date()
+  const currentYear = Number(now.getFullYear().toString().slice(-2))
+  const currentMonth = now.getMonth() + 1
 
   const formik = useFormik({
     initialValues: {
