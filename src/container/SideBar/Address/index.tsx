@@ -66,7 +66,9 @@ function AddressForm() {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
           />
-          <small style={{ color: 'black' }}>{formik.errors.recName}</small>
+          {formik.touched.recName && formik.errors.recName && (
+            <small style={{ color: 'black' }}>{formik.errors.recName}</small>
+          )}
         </label>
         <label>
           <span>Endereço</span>
@@ -77,7 +79,9 @@ function AddressForm() {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
           />
-          <small style={{ color: 'black' }}>{formik.errors.recAdress}</small>
+          {formik.touched.recAdress && formik.errors.recAdress && (
+            <small style={{ color: 'black' }}>{formik.errors.recAdress}</small>
+          )}
         </label>
         <label>
           <span>Cidade</span>
@@ -88,7 +92,9 @@ function AddressForm() {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
           />
-          <small style={{ color: 'black' }}>{formik.errors.recCity}</small>
+          {formik.touched.recCity && formik.errors.recCity && (
+            <small style={{ color: 'black' }}>{formik.errors.recCity}</small>
+          )}
         </label>
         <div>
           <label>
@@ -101,7 +107,9 @@ function AddressForm() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
-            <small style={{ color: 'black' }}>{formik.errors.recCode}</small>
+            {formik.touched.recCode && formik.errors.recCode && (
+              <small style={{ color: 'black' }}>{formik.errors.recCode}</small>
+            )}
           </label>
           <label>
             <span>Número</span>
@@ -112,7 +120,9 @@ function AddressForm() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
-            <small style={{ color: 'black' }}>{formik.errors.recNum}</small>
+            {formik.touched.recNum && formik.errors.recNum && (
+              <small style={{ color: 'black' }}>{formik.errors.recNum}</small>
+            )}
           </label>
         </div>
         <label>
@@ -125,7 +135,12 @@ function AddressForm() {
             onBlur={formik.handleBlur}
           />
         </label>
-        <button type="submit">Continuar com o pagamento</button>
+        <button
+          type="submit"
+          disabled={!(formik.isValid && formik.dirty)}
+        >
+          Continuar com o pagamento
+        </button>
         <button type="button" onClick={() => dispatch(changeContent('cart'))}>
           Voltar para o carrinho
         </button>

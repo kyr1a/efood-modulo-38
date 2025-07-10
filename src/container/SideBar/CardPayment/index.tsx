@@ -94,7 +94,9 @@ function CardPaymentForm({
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
           />
-          <small>{formik.errors.cardOwner}</small>
+          {formik.touched.cardOwner && formik.errors.cardOwner && (
+            <small>{formik.errors.cardOwner}</small>
+          )}
         </label>
         <div>
           <label id="cardNumber">
@@ -107,7 +109,9 @@ function CardPaymentForm({
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
-            <small>{formik.errors.cardNumber}</small>
+            {formik.touched.cardNumber && formik.errors.cardNumber && (
+              <small>{formik.errors.cardNumber}</small>
+            )}
           </label>
           <label id="cardCode">
             <span>CVV</span>
@@ -119,7 +123,9 @@ function CardPaymentForm({
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
-            <small>{formik.errors.cardCode}</small>
+            {formik.touched.cardCode && formik.errors.cardCode && (
+              <small>{formik.errors.cardCode}</small>
+            )}
           </label>
         </div>
         <div>
@@ -133,7 +139,9 @@ function CardPaymentForm({
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
-            <small>{formik.errors.cardExpiresMonth}</small>
+            {formik.touched.cardExpiresMonth && formik.errors.cardExpiresMonth && (
+              <small>{formik.errors.cardExpiresMonth}</small>
+            )}
           </label>
           <label>
             <span>Ano de vencimento</span>
@@ -145,10 +153,17 @@ function CardPaymentForm({
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
-            <small>{formik.errors.cardExpiresYear}</small>
+            {formik.touched.cardExpiresYear && formik.errors.cardExpiresYear && (
+              <small>{formik.errors.cardExpiresYear}</small>
+            )}
           </label>
         </div>
-        <button type="submit">Finalizar pagamento</button>
+        <button
+          type="submit"
+          disabled={!(formik.isValid && formik.dirty)}
+        >
+          Finalizar pagamento
+        </button>
         <button
           type="button"
           onClick={() => dispatch(changeContent('adressform'))}
