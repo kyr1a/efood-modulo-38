@@ -31,6 +31,9 @@ function CardPaymentForm({
     (state: RootReducer) => state.orderReducer.products
   )
 
+  const currentYear = Number(new Date().getFullYear().toString().slice(-2))
+  const currentMonth = new Date().getMonth() + 1
+
   const formik = useFormik({
     initialValues: {
       cardOwner: '',
@@ -43,11 +46,42 @@ function CardPaymentForm({
       cardOwner: Yup.string()
         .min(3, 'O nome deve ter ao menos 3 letras ')
         .required('Este campo é obrigatório'),
-      cardNumber: Yup.string().required('Este campo é obrigatório'),
-      cardCode: Yup.string().required('Este campo é obrigatório'),
-      cardExpiresMonth: Yup.string().required('Este campo é obrigatório'),
-      cardExpiresYear: Yup.string().required('Este campo é obrigatório')
-    }),
+      cardNumber: Yup.string()
+        .matches(/^\d{4}-\d{4}-\d{4}-\d{4}$/, 'O número deve ter 16 dígitos')
+        .required('Este campo é obrigatório'),
+      cardCode: Yup.string()
+        .matches(/^\d{3}$/, 'O CVV deve ter 3 dígitos')
+        .required('Este campo é obrigatório'),
+      cardExpiresMonth: Yup.string()
+        .matches(/^(0[1-9]|1[0-2])$/, 'Mês inválido')
+        .required('Este campo é obrigatório'),
+      cardExpiresYear: Yup.string()
+        .matches(/^\d{2}$/, 'Ano inválido')
+        .test('ano-nao-expirado', 'Ano inválido', function (value) {
+          if (!value) return false
+          const year = Number(value)
+          return year >= currentYear
+        })
+        .required('Este campo é obrigatório')
+    }).test(
+      'cartao-nao-expirado',
+      'Cartão expirado',
+      function (values) {
+        if (
+          !values.cardExpiresMonth ||
+          !values.cardExpiresYear ||
+          !/^\d{2}$/.test(values.cardExpiresYear) ||
+          !/^(0[1-9]|1[0-2])$/.test(values.cardExpiresMonth)
+        ) {
+          return true // outros erros já serão exibidos
+        }
+        const year = Number(values.cardExpiresYear)
+        const month = Number(values.cardExpiresMonth)
+        if (year > currentYear) return true
+        if (year === currentYear && month >= currentMonth) return true
+        return false
+      }
+    ),
     onSubmit: (values) => {
       dispatch(
         setPayment({

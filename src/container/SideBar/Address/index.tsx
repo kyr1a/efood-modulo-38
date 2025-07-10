@@ -30,11 +30,12 @@ function AddressForm() {
         .min(5, 'A cidade deve ter ao menos 5 letras')
         .required('Indique onde devemos entregar'),
       recCode: Yup.string()
-        .min(9, 'O CEP deve ter 9 caracterer')
-        .max(9, 'O CEP deve ter 9 caracterer')
+        .matches(/^\d{5}-\d{3}$/, 'O CEP deve estar no formato 99999-999')
         .required('Indique onde devemos entregar'),
       recNum: Yup.number()
-        .min(1, 'O número da casa deve ter ao menos 1 dígito')
+        .typeError('O número da casa deve ser um número')
+        .integer('O número da casa deve ser inteiro')
+        .min(1, 'O número da casa deve ser maior que zero')
         .required('Indique onde devemos entregar')
     }),
     onSubmit: (values) => {
